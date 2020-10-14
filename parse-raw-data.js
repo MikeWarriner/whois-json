@@ -26,15 +26,27 @@ var getCommonDelimiterForm = function(rawData, delimiter) {
 var parseRawData = function(rawData) {
 	
 	var result = {};	
+	//console.log(rawData);
 	
 	rawData = stripHTMLEntitites(rawData)
 	rawData = rawData.replace(/:\s*\r\n/g, ': ');
 	var lines = rawData.split('\n');
 	var delimiter = getCommonDelimiterForm(rawData, DELIMITER);
 
+	var linecount = 0;
 	lines.forEach(function(line){
 	
 		line = line.trim();
+		linecount = linecount + 1;
+		//console.log(':'+linecount+':'+line);
+
+		var hack = "Registrar Registration Expiration Date: Registrar: ";
+		if (line.startsWith(hack))
+		{
+			//console.log("**ALERT**");
+		
+			line = line.replace(hack, 'Registrar: ')
+		}
 
 		// colon space because that's the standard delimiter - not ':' as that's used in eg, http links
 		if ( line && line.includes(delimiter) ) {
@@ -50,6 +62,7 @@ var parseRawData = function(rawData) {
 					result[key] = `${result[key]} ${value}`;
 					return
 				}
+				//console.log('-- key['+key+'] = '+value);
 				result[key] = value;
 			}
 		}
